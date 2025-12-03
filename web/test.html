@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>WebSocket Test</title>
+</head>
+
+<body>
+  <h2>WebSocket chat test</h2>
+
+  <input id="to" placeholder="To user_id">
+  <input id="msg" placeholder="Message">
+  <button onclick="sendMsg()">Send</button>
+
+  <pre id="log"></pre>
+
+  <script>
+    const userId = prompt("Enter your user_id");
+    const ws = new WebSocket(`ws://localhost:8080/ws?user_id=${userId}`);
+
+    ws.onopen = () => log("Connected");
+    ws.onmessage = (event) => log("Received: " + event.data);
+
+    function sendMsg() {
+      const to = document.getElementById("to").value;
+      const message = document.getElementById("msg").value;
+
+      ws.send(JSON.stringify({ to, message }));
+    }
+
+    function log(text) {
+      const pre = document.getElementById("log");
+      pre.textContent += text + "\n";
+    }
+  </script>
+</body>
+
+</html>
