@@ -1,59 +1,84 @@
-go / websockets / fiber / redis streams
+<h1> Go / Fiber / WebSockets / Redis Streams </h1>
 
+<hr>
 
-cfg & env
+<h2> Конфигурация и окружение</h2>
 
-`.env.example` хранит в себе пример для `.env`
+<p>Шаблон файла окружения лежит в <code>.env.example</code>.  
+Его необходимо <b>переименовать</b> или <b>скопировать</b> в <code>.env</code>:</p>
 
-нужно переименовать или скопировать в `.env`
+<pre><code>cp .env.example .env</code></pre>
 
-дефолтный порт 8080
+<p><b>Параметры по умолчанию:</b></p>
+<ul>
+    <li>Порт: <code>8080</code></li>
+    <li>JWT secret: <code>"a-string-secret-at-least-256-bits-long"</code></li>
+</ul>
 
-дефолтный jwt secret "a-string-secret-at-least-256-bits-long"
+<hr>
 
+<h2> Docker</h2>
 
-DOCKER
+<p><b>Дефолтный порт сервера: 8080</b></p>
 
-note: дефолтный порт 8080
+<p>Запуск проекта одной командой:</p>
 
-сбилдить образы и запусить `docker compose up --build`
+<pre><code>docker compose up --build
+</code></pre>
 
-или
+<p>Альтернативный вариант:</p>
 
-`
+<pre><code>
 docker compose build app
-`
-
-`
 docker compose up
-`
+</code></pre>
 
-или
+<p>Создать контейнер и попасть внутрь:</p>
 
-попасть в контейнер
-`docker compose run --rm app bash`
+<pre><code>docker compose run --rm app bash
+</code></pre>
 
+<hr>
 
-GO
+<h2> Go</h2>
 
-точка входа `./cmd/app/main.go`
+<p>Точка входа:</p>
 
-получить бинарник `go build -o server ./cmd/app/main.go`
+<pre><code>./cmd/app/main.go
+</code></pre>
 
+<p>Собрать бинарник:</p>
 
+<pre><code>go build -o server ./cmd/app/main.go
+</code></pre>
 
-TEST
+<hr>
 
-в папке `/web` лежит простенький html+js для протыкивания руками
+<h2>🧪 Тестирование</h2>
 
-валидные прегены jwt токенов (вставить в форму), в токене зашит user_id
+<p>В папке <code>/web</code> находится простой HTML+JS для ручной проверки</p>
 
-user_id=101 & 
-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTAxIn0.2nbyHB2XmSbtk_UfFfcP3rXjOolCSdwGkO9rtuUEexg
+<h3>Готовые JWT токены</h3>
 
-user_id=102 & 
-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTAyIn0.IijsmEuksoCXxpbflf_Kz4zgKJ3K2tNHb9qsIHZd210
+<div class="token-box">
+    <p><b>user_id = 101</b></p>
+    <pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTAxIn0.2nbyHB2XmSbtk_UfFfcP3rXjOolCSdwGkO9rtuUEexg</code></pre>
+</div>
 
+<div class="token-box">
+    <p><b>user_id = 102</b></p>
+    <pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTAyIn0.IijsmEuksoCXxpbflf_Kz4zgKJ3K2tNHb9qsIHZd210</code></pre>
+</div>
 
-если нажать на connect, когда соединение уже есть, то в форме останется ошибка (нельзя под одним токеном два коннекта), старый коннект потеряется (но будет жить, это видно по логам)
+<h3>Особенности поведения</h3>
+<p>Если нажать <b>Connect</b>, когда соединение уже открыто:</p>
+<ul>
+    <li>появится ошибка: «нельзя под одним токеном два коннекта»;</li>
+    <li>старое соединение потеряется на клиенте;</li>
+    <li>но фактически останется живым (видно в логах).</li>
+</ul>
 
+<hr>
+
+</body>
+</html>
