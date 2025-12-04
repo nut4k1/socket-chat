@@ -1,5 +1,17 @@
 go / websockets / fiber / redis streams
 
+
+cfg & env
+
+`.env.example` хранит в себе пример для `.env`
+
+нужно переименовать или скопировать в `.env`
+
+дефолтный порт 8080
+
+дефолтный jwt secret "a-string-secret-at-least-256-bits-long"
+
+
 DOCKER
 
 note: дефолтный порт 8080
@@ -25,14 +37,6 @@ GO
 
 получить бинарник `go build -o server ./cmd/app/main.go`
 
-
-cfg & env
-
-`.env.example` хранит в себе пример для `.env`
-
-в docker он автоматически скопируется в валидный `.env`
-дефолтный порт 8080
-дефолтный jwt secret "a-string-secret-at-least-256-bits-long"
 
 
 TEST
