@@ -6,12 +6,11 @@ import (
 	"log"
 
 	"github.com/nut4k1/socket-chat/internal/broker"
-	"github.com/nut4k1/socket-chat/internal/ws"
 
 	"github.com/redis/go-redis/v9"
 )
 
-func processMessage(hub *ws.Hub, userID string, msg redis.XMessage, ctx context.Context) error {
+func processMessage(hub HubInterface, userID string, msg redis.XMessage, ctx context.Context) error {
 	from, _ := msg.Values["from"].(string)
 	to, _ := msg.Values["to"].(string)
 	text, _ := msg.Values["message"].(string)
@@ -21,7 +20,7 @@ func processMessage(hub *ws.Hub, userID string, msg redis.XMessage, ctx context.
 	msgJSON := fmt.Sprintf(`{"from":"%s","message":"%s"}`, from, text)
 	err := hub.SendToUser(to, []byte(msgJSON))
 	if err != nil {
-		log.Fatal("hub SendToUser error:", err)
+		log.Println("hub SendToUser error:", err)
 		return err
 	}
 

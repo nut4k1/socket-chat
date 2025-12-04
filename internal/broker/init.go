@@ -25,7 +25,7 @@ func Init(cfg redisConfig) *redis.Client {
 
 	_, err := client.Ping(clientCtx).Result()
 	if err != nil {
-		log.Fatal("Redis connection error:", err)
+		log.Println("Redis connection error:", err)
 	}
 
 	return client

@@ -1,8 +1,12 @@
 package server
 
 import (
-	"fmt"
+	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/nut4k1/socket-chat/internal/broker"
 	"github.com/nut4k1/socket-chat/internal/config"
@@ -15,23 +19,10 @@ import (
 )
 
 func Start(cfg *config.Config) {
-	// подключаемся к Redis
 	rds := broker.Init(cfg)
 	defer rds.Close()
 
-	// инит хаба подключений
 	hub := ws.NewHub()
-
-	// go func() {
-	// 	for {
-	// 		time.Sleep(1 * time.Second)
-	// 		fmt.Println("conns:", len(hub.Clients()))
-	// 		for id, _ := range hub.Clients() {
-	// 			fmt.Println("conn user id:", id)
-	// 		}
-	// 	}
-	// }()
-
 	app := fiber.New()
 
 	wsConfig := websocket.Config{
@@ -44,6 +35,26 @@ func Start(cfg *config.Config) {
 	app.Use("/ws", middlewares.DupConn(hub))
 	app.Get("/ws", websocket.New(handlers.CreateWCHandler(hub), wsConfig))
 
-	log.Printf("Server started on :%d \n", cfg.Server.Port)
-	log.Fatal(app.Listen(fmt.Sprintf(":%d", cfg.Server.Port)))
+	go func() {
+		log.Printf("Server started on :%d \n", cfg.Server.Port)
+		if err := app.Listen(":8080"); err != nil {
+			log.Println("Fiber crushed:", err)
+		}
+	}()
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	<-ctx.Done()
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := hub.Shutdown(); err != nil {
+		log.Println("Hub shutdown error:", err)
+	}
+	log.Println("app ShutdownWithContext")
+	if err := app.ShutdownWithContext(shutdownCtx); err != nil {
+		log.Println("Fiber shutdown error:", err)
+	}
 }

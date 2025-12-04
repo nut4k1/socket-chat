@@ -45,13 +45,3 @@ func ValidateToken(s string) func(ctx *fiber.Ctx) error {
 		return ctx.Next()
 	}
 }
-
-// func ValidateToken(ctx *fiber.Ctx) error {
-// 	token := ctx.Query("token")
-// 	userID := ctx.Query("user_id")
-// 	if !isValidToken(token, userID) {
-// 		return ctx.Status(fiber.StatusUnauthorized).SendString("Unauthorized: invalid token")
-// 	}
-
-// 	return ctx.Next()
-// }

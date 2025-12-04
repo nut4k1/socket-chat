@@ -32,12 +32,12 @@ type Config struct {
 func Load(path string) *Config {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		log.Fatalf("failed to read config: %v", err)
+		log.Printf("failed to read config: %v \n", err)
 	}
 
 	var cfg Config
 	if err := yaml.Unmarshal(data, &cfg); err != nil {
-		log.Fatalf("failed to unmarshal config: %v", err)
+		log.Printf("failed to unmarshal config: %v /n", err)
 	}
 
 	overrideByEnv(&cfg)

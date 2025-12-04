@@ -14,7 +14,7 @@ func EnsureGroup(stream string, group string, ctx context.Context) error {
 		"0-0",
 	).Err()
 	if err != nil && !strings.Contains(err.Error(), "BUSYGROUP") {
-		log.Fatal("client XGroupCreateMkStream error:", err)
+		log.Println("client XGroupCreateMkStream error:", err)
 		return err
 	}
 

@@ -14,7 +14,14 @@ type WSMessage struct {
 	Message string `json:"message"`
 }
 
-func CreateWCHandler(hub *ws.Hub) func(c *websocket.Conn) {
+type HubInterface interface {
+	Register(*ws.Client)
+	Unregister(string)
+	CheckClient(string) bool
+	SendToUser(string, []byte) error
+}
+
+func CreateWCHandler(hub HubInterface) func(c *websocket.Conn) {
 	return func(c *websocket.Conn) {
 		userID := c.Query("user_id")
 
@@ -34,7 +41,7 @@ func CreateWCHandler(hub *ws.Hub) func(c *websocket.Conn) {
 		for {
 			err := readAndPublish(userID, c)
 			if err != nil {
-				log.Fatal("readAndPublish crushed:", err)
+				log.Println("readAndPublish crushed:", err)
 				return
 			}
 		}

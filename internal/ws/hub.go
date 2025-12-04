@@ -17,6 +17,18 @@ func (h *Hub) Clients() map[string]*Client {
 	return h.clients
 }
 
+func (h *Hub) Shutdown() error {
+	log.Println("Shutdown Hub")
+	for userID, client := range h.clients {
+		if err := client.Conn.Close(); err != nil {
+			log.Println("userID:", userID, "conn close error")
+		}
+		log.Println("userID:", userID, "conn closed")
+	}
+
+	return nil
+}
+
 func NewHub() *Hub {
 	return &Hub{
 		clients: make(map[string]*Client),
