@@ -2,14 +2,19 @@ package ws
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
-	"github.com/fasthttp/websocket"
+	"github.com/gofiber/websocket/v2"
 )
 
 type Hub struct {
 	clients map[string]*Client
 	mu      sync.RWMutex
+}
+
+func (h *Hub) Clients() map[string]*Client {
+	return h.clients
 }
 
 func NewHub() *Hub {
@@ -18,32 +23,36 @@ func NewHub() *Hub {
 	}
 }
 
-// Добавить клиента
+func (h *Hub) CheckClient(userID string) bool {
+	h.mu.RLock()
+	_, ok := h.clients[userID]
+	h.mu.RUnlock()
+	return ok
+}
+
 func (h *Hub) Register(client *Client) {
 	h.mu.Lock()
 	h.clients[client.UserID] = client
 	h.mu.Unlock()
 
-	fmt.Println("User connected:", client.UserID)
+	log.Println("User Register:", client.UserID)
 }
 
-// Удалить клиента
 func (h *Hub) Unregister(userID string) {
 	h.mu.Lock()
 	delete(h.clients, userID)
 	h.mu.Unlock()
 
-	fmt.Println("User disconnected:", userID)
+	log.Println("User Unregister:", userID)
 }
 
-// Отправка сообщения конкретному пользователю
 func (h *Hub) SendToUser(to string, message []byte) error {
 	h.mu.RLock()
 	client, ok := h.clients[to]
 	h.mu.RUnlock()
 
 	if !ok {
-		fmt.Println("User offline:", to)
+		log.Println("User offline:", to)
 		return fmt.Errorf("user offline")
 	}
 

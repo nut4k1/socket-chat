@@ -1,0 +1,12 @@
+server:
+  port: 8080
+redis:
+  addr: "redis:6379"
+  password:
+  db: 0
+auth:
+  jwt_secret:
+ws:
+  read_buffer_size: 1024
+  write_buffer_size: 1024
+  ping_interval_sec: 20

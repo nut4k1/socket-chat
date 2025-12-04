@@ -7,18 +7,26 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var Client *redis.Client
-var ClientCtx = context.Background()
+var client *redis.Client
+var clientCtx = context.Background()
 
-func Init() error {
-	Client = redis.NewClient(&redis.Options{
-		Addr: "redis:6379",
+type redisConfig interface {
+	RedisAddr() string
+	RedisPassword() string
+	RedisDB() int
+}
+
+func Init(cfg redisConfig) *redis.Client {
+	client = redis.NewClient(&redis.Options{
+		Addr:     cfg.RedisAddr(),
+		Password: cfg.RedisPassword(),
+		DB:       cfg.RedisDB(),
 	})
-	_, err := Client.Ping(ClientCtx).Result()
+
+	_, err := client.Ping(clientCtx).Result()
 	if err != nil {
 		log.Fatal("Redis connection error:", err)
-		return err
 	}
 
-	return nil
+	return client
 }

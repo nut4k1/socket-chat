@@ -1,7 +1,7 @@
 package broker
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -20,22 +20,16 @@ func transformMessage(bm BrockerMessage) map[string]any {
 	}
 }
 
-func Publish(bm BrockerMessage) error {
-	_, err := Client.XAdd(ClientCtx, &redis.XAddArgs{
-		Stream: "chat-stream",
+func Publish(stream string, bm BrockerMessage) error {
+	_, err := client.XAdd(clientCtx, &redis.XAddArgs{
+		Stream: stream, // должен создать стрим если его нет
 		Values: transformMessage(bm),
 	}).Result()
-	// _, err := Client.XAdd(ClientCtx, &redis.XAddArgs{
-	// 	Stream: "chat-stream",
-	// 	Values: map[string]interface{}{
-	// 		"from":    userID,
-	// 		"to":      msg.To,
-	// 		"message": msg.Message,
-	// 	},
-	// }).Result()
+
+	log.Printf("Publish: add msg to %s \n", stream)
 
 	if err != nil {
-		fmt.Println("redis xadd error:", err)
+		log.Println("redis xadd error:", err)
 		return err
 	}
 	return nil
