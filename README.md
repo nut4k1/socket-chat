@@ -21,7 +21,7 @@ note: дефолтный порт 8080
 или
 
 `
-docker compose build app .
+docker compose build app
 docker compose up
 `
 
