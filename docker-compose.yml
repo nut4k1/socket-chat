@@ -3,11 +3,13 @@ services:
   app:
     build: .
     container_name: socket-chat
+    ports:
+      - "8080:8080"
     volumes:
       - .:/app:cached
       - ~/.ssh:/root/.ssh
       - ~/.bash_history:/root/.bash_history
-    command: sleep infinity
+    command: go run cmd/app/main.go
     depends_on:
       redis:
         condition: service_healthy

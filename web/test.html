@@ -30,11 +30,6 @@
 
       ws = new WebSocket(`ws://localhost:8080/ws?user_id=${userId}&token=${token}`);
 
-      // new_ws.onopen = () => {
-      //   log('Recreated');
-      //   ws = new_ws
-      // }
-
       ws.onopen = () => log('Connected');
       ws.onmessage = (event) => log('Received: ' + event.data);
       ws.onclose = (event) => log('Disconnected: ' + event.code + ' ' + event.reason);
